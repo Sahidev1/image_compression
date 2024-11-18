@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <string.h>
 
 int main(int argc, char** argv){
 
@@ -52,7 +52,27 @@ int main(int argc, char** argv){
     printf("Ypixels_perM: %d\n", data->info->Ypixels_perM);
     printf("colors_used: %d\n", data->info->colors_used);
     printf("important_colors: %d\n", data->info->important_colors);
-    
+
+    printf("first color in pixel data: %x\n", *data->pixel_data);
+
+    if(argc > 2){
+        if (strcmp(argv[2], "print") == 0){
+            printf("printing pixel data\n");
+            int x, y;
+            uint32_t pixel;
+            int bytes_per_pixel = data->info->bits_per_pixel / 8;
+            uint32_t* pixel_ptr = data->pixel_data;
+            for (int i = 0; i < data->info->imagesize; i++){
+                pixel = *pixel_ptr;
+                y = i / (data->info->width);
+                x = i % (data->info->width + data->info->width%32);
+                printf("x: %d, y: %d, pixel: %x\n", x, y, pixel);
+                pixel_ptr = (uint32_t*)((((char*)pixel_ptr)) + bytes_per_pixel);
+                printf("addr %p\n", pixel_ptr);
+
+            }
+        }
+    }
 
     return 0;
 }
